@@ -4,6 +4,12 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+//! Trencadis Display Server
+
+#![warn(missing_docs)]
+#![deny(trivial_numeric_casts, unstable_features,
+        unused_import_braces, unused_qualifications)]
+
 extern crate app_units;
 extern crate euclid;
 extern crate gleam;
