@@ -16,7 +16,7 @@ extern crate webrender_traits;
 use gleam::gl;
 use std::env;
 use std::path::PathBuf;
-use webrender_traits::{ClipRegion, ColorF, Epoch};
+use webrender_traits::{ClipRegion, ColorF, Epoch, TransformStyle};
 use webrender_traits::{DeviceUintSize, LayoutPoint, LayoutRect, LayoutSize};
 use webrender_traits::PipelineId;
 
@@ -101,20 +101,18 @@ fn main() {
     let bounds = LayoutRect::new(LayoutPoint::zero(),
                                  LayoutSize::new(width as f32, height as f32));
 
-    let mut root_frame = Frame::new(bounds);
+    let mut root_frame = Frame::default();
 
     let button_size = LayoutSize::new(50.0, 100.0);
 
-    let button_a_bounds = LayoutRect::new(LayoutPoint::new(10.0, 10.0), button_size);
-    let mut button_a = Frame::new(button_a_bounds);
-    button_a.push_rect(LayoutRect::new(LayoutPoint::zero(), button_size),
+    let mut button_a = Frame::default();
+    button_a.push_rect(LayoutRect::new(LayoutPoint::new(10.0, 10.0), button_size),
                        ClipRegion::simple(&bounds),
                        ColorF::new(1.0, 0.0, 0.0, 1.0));
     root_frame.push_child(button_a);
 
-    let button_b_bounds = LayoutRect::new(LayoutPoint::new(90.0, 10.0), button_size);
-    let mut button_b = Frame::new(button_b_bounds);
-    button_b.push_rect(LayoutRect::new(LayoutPoint::zero(), button_size),
+    let mut button_b = Frame::default();
+    button_b.push_rect(LayoutRect::new(LayoutPoint::new(90.0, 10.0), button_size),
                        ClipRegion::simple(&bounds),
                        ColorF::new(1.0, 0.0, 0.0, 0.5));
     root_frame.push_child(button_b);
@@ -122,7 +120,16 @@ fn main() {
     // Now build and render it.
     let pipeline_id = PipelineId(0, 0);
     let mut builder = webrender_traits::DisplayListBuilder::new(pipeline_id);
+    builder.push_stacking_context(webrender_traits::ScrollPolicy::Scrollable,
+                                  bounds,
+                                  0,
+                                  None,
+                                  TransformStyle::Flat,
+                                  None,
+                                  webrender_traits::MixBlendMode::Normal,
+                                  Vec::new());
     root_frame.build(&mut builder);
+    builder.pop_stacking_context();
 
     let epoch = Epoch(0);
     let root_background_color = ColorF::new(1.0, 1.0, 1.0, 1.0);

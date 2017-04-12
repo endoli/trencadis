@@ -6,7 +6,7 @@
 
 use webrender_traits::{BorderDetails, BorderWidths};
 use webrender_traits::{ClipRegion, ColorF, DisplayListBuilder};
-use webrender_traits::{LayoutRect, MixBlendMode, ScrollPolicy, TransformStyle};
+use webrender_traits::LayoutRect;
 
 pub trait Item {
     fn build(&self, builder: &mut DisplayListBuilder);
@@ -37,37 +37,20 @@ impl Item for BorderItem {
     }
 }
 
+#[derive(Default)]
 pub struct Frame {
-    bounds: LayoutRect,
     items: Vec<Box<Item>>,
     children: Vec<Frame>,
 }
 
 impl Frame {
-    pub fn new(bounds: LayoutRect) -> Self {
-        Frame {
-            bounds: bounds,
-            items: vec![],
-            children: vec![],
-        }
-    }
-
     pub fn build(&self, builder: &mut DisplayListBuilder) {
-        builder.push_stacking_context(ScrollPolicy::Scrollable,
-                                      self.bounds,
-                                      0,
-                                      None,
-                                      TransformStyle::Flat,
-                                      None,
-                                      MixBlendMode::Normal,
-                                      Vec::new());
         for item in &self.items {
             item.build(builder);
         }
         for child in &self.children {
             child.build(builder);
         }
-        builder.pop_stacking_context();
     }
 
     pub fn push_child(&mut self, frame: Frame) {
