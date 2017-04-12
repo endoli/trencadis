@@ -5,6 +5,22 @@
 // except according to those terms.
 
 //! Trencadis Display Server
+//!
+//! This is an experimental display server for rendering user interfaces
+//! built with the Trencadis frameworks. It uses the [WebRender][webrender]
+//! library from [Mozilla][mozilla]'s [Servo][servo] project.
+//!
+//! The display server is responsible for taking a concrete, laid out,
+//! set of widgets and associated style information and rendering it
+//! on screen.
+//!
+//! For testing purposes, this is currently just an executable, although,
+//! in the future, it should be a library that can be embedded into other
+//! applications or run as a separate program.
+//!
+//! [webrender]: https://github.com/servo/webrender
+//! [mozilla]: https://mozilla.org/
+//! [servo]: https://servo.org/
 
 #![warn(missing_docs)]
 #![deny(trivial_numeric_casts, unstable_features,
