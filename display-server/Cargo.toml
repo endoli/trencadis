@@ -2,6 +2,7 @@
 name = "display-server"
 version = "0.1.0"
 authors = ["Bruce Mitchener <bruce.mitchener@gmail.com>"]
+license = "MIT/Apache-2.0"
 
 [dependencies]
 app_units = "0.4"
