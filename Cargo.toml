@@ -1,5 +1,5 @@
 [workspace]
 members = [
     "display-server",
-    "gestures",
+    "input",
 ]

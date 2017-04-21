@@ -4,7 +4,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! Trencadis Gestures
+//! Trencadis Input
 //!
 //! The hope is that this quickly becomes a stand-alone crate
 //! and can be widely used.
@@ -12,6 +12,9 @@
 #![warn(missing_docs)]
 #![deny(trivial_numeric_casts, unstable_features,
         unused_import_braces, unused_qualifications)]
+
+pub mod events;
+pub mod gestures;
 
 #[cfg(test)]
 mod tests {

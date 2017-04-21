@@ -1,5 +1,5 @@
 [package]
-name = "gestures"
+name = "input"
 version = "0.1.0"
 authors = ["Bruce Mitchener <bruce.mitchener@gmail.com>"]
 license = "MIT/Apache-2.0"
