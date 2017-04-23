@@ -22,7 +22,7 @@ pub struct GestureMapping<'gm> {
 
 impl<'gm> GestureMapping<'gm> {
     #[allow(missing_docs)]
-    pub fn lookup_gesture(&self, _event: &Event) -> &'gm Gesture {
+    pub fn lookup_gesture(&self, _event: &Event) -> Option<&'gm Gesture> {
         unimplemented!();
     }
 }
