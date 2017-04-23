@@ -10,7 +10,7 @@ use events::Event;
 
 #[allow(missing_docs)]
 pub trait Gesture {
-    fn matches_event(&self, _event: Event) -> bool;
+    fn matches_event(&self, _event: &Event) -> bool;
 }
 
 #[allow(missing_docs)]
@@ -22,7 +22,7 @@ pub struct GestureMapping<'gm> {
 
 impl<'gm> GestureMapping<'gm> {
     #[allow(missing_docs)]
-    pub fn lookup_gesture(&self, _event: Event) -> &'gm Gesture {
+    pub fn lookup_gesture(&self, _event: &Event) -> &'gm Gesture {
         unimplemented!();
     }
 }
