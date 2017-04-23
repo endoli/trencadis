@@ -8,6 +8,18 @@
 //!
 //! This module is based on the specifications provided by the
 //! W3C for web browsers.
+//!
+//! Input events are expected to cover all means of input that
+//! an application might respond to from the outside world. This
+//! includes:
+//!
+//! * Keyboard
+//! * Mouse or trackpad
+//! * Gamepad
+//! * Stylus or pen
+//! * Sensors like a gyroscope
+//!
+//! This module provides low level events.
 
 mod keyboard;
 mod pointer;

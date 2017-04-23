@@ -5,6 +5,11 @@
 // except according to those terms.
 
 //! Gestures
+//!
+//! A gesture provides a way to map underlying input events to higher
+//! level actions within a user interface. These can be used rather than
+//! the low level events to provide a mechanism where users can customize
+//! which events result in a corresponding action.
 
 use events::Event;
 
