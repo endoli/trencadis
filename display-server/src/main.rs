@@ -32,6 +32,7 @@ extern crate gleam;
 extern crate glutin;
 extern crate palette;
 extern crate petgraph;
+extern crate rusttype;
 extern crate webrender;
 extern crate webrender_traits;
 
@@ -43,8 +44,10 @@ use webrender_traits::{DeviceUintSize, LayoutPoint, LayoutRect, LayoutSize};
 use webrender_traits::PipelineId;
 
 mod frames;
+mod transcript;
 
 use frames::Frame;
+use transcript::{Entry, Transcript};
 
 struct Notifier {
     window_proxy: glutin::WindowProxy,
@@ -148,6 +151,16 @@ fn main() {
                                   webrender_traits::MixBlendMode::Normal,
                                   Vec::new());
     root_frame.build(&mut builder);
+    let t = Transcript::new_with_entries(&api,
+                                         LayoutRect::new(LayoutPoint::new(30.0, 30.0),
+                                                         LayoutSize::new(600.0, 400.0)),
+                                         vec![Entry::new("[1]".to_owned(),
+                                                         "ls".to_owned(),
+                                                         "help_me.txt".to_owned()),
+                                              Entry::new("[2]".to_owned(),
+                                                         "cat help_me.txt".to_owned(),
+                                                         "We're long past that.".to_owned())]);
+    t.render(&mut builder);
     builder.pop_stacking_context();
 
     let epoch = Epoch(0);
