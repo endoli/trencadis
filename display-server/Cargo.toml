@@ -11,5 +11,5 @@ gleam = "0.4"
 palette = "0.2.1"
 petgraph = "0.4.4"
 servo-glutin = "0.10.1"
-webrender = { git = "https://github.com/servo/webrender", rev = "87176871" }
-webrender_traits = { git = "https://github.com/servo/webrender", rev = "87176871" }
+webrender = { git = "https://github.com/servo/webrender", rev = "be5a41ec" }
+webrender_traits = { git = "https://github.com/servo/webrender", rev = "be5a41ec" }

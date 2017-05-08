@@ -38,7 +38,7 @@ extern crate webrender_traits;
 use gleam::gl;
 use std::env;
 use std::path::PathBuf;
-use webrender_traits::{ClipRegion, ColorF, Epoch, TransformStyle};
+use webrender_traits::{ColorF, Epoch, TransformStyle};
 use webrender_traits::{DeviceUintSize, LayoutPoint, LayoutRect, LayoutSize};
 use webrender_traits::PipelineId;
 
@@ -129,13 +129,11 @@ fn main() {
 
     let mut button_a = Frame::default();
     button_a.push_rect(LayoutRect::new(LayoutPoint::new(10.0, 10.0), button_size),
-                       ClipRegion::simple(&bounds),
                        ColorF::new(1.0, 0.0, 0.0, 1.0));
     root_frame.push_child(button_a);
 
     let mut button_b = Frame::default();
     button_b.push_rect(LayoutRect::new(LayoutPoint::new(90.0, 10.0), button_size),
-                       ClipRegion::simple(&bounds),
                        ColorF::new(1.0, 0.0, 0.0, 0.5));
     root_frame.push_child(button_b);
 
@@ -144,7 +142,6 @@ fn main() {
     let mut builder = webrender_traits::DisplayListBuilder::new(pipeline_id);
     builder.push_stacking_context(webrender_traits::ScrollPolicy::Scrollable,
                                   bounds,
-                                  0,
                                   None,
                                   TransformStyle::Flat,
                                   None,

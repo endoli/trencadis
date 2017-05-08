@@ -5,7 +5,7 @@
 // except according to those terms.
 
 use webrender_traits::{BorderDetails, BorderWidths};
-use webrender_traits::{ClipRegion, ColorF, DisplayListBuilder};
+use webrender_traits::{ColorF, DisplayListBuilder};
 use webrender_traits::LayoutRect;
 
 pub trait Item {
@@ -14,26 +14,26 @@ pub trait Item {
 
 pub struct RectItem {
     pub rect: LayoutRect,
-    pub clip: ClipRegion,
     pub color: ColorF,
 }
 
 impl Item for RectItem {
     fn build(&self, builder: &mut DisplayListBuilder) {
-        builder.push_rect(self.rect, self.clip, self.color);
+        let clip = builder.push_clip_region(&self.rect, Vec::new(), None);
+        builder.push_rect(self.rect, clip, self.color);
     }
 }
 
 pub struct BorderItem {
     pub rect: LayoutRect,
-    pub clip: ClipRegion,
     pub widths: BorderWidths,
     pub details: BorderDetails,
 }
 
 impl Item for BorderItem {
     fn build(&self, builder: &mut DisplayListBuilder) {
-        builder.push_border(self.rect, self.clip, self.widths, self.details);
+        let clip = builder.push_clip_region(&self.rect, Vec::new(), None);
+        builder.push_border(self.rect, clip, self.widths, self.details);
     }
 }
 
@@ -57,10 +57,9 @@ impl Frame {
         self.children.push(frame);
     }
 
-    pub fn push_rect(&mut self, rect: LayoutRect, clip: ClipRegion, color: ColorF) {
+    pub fn push_rect(&mut self, rect: LayoutRect, color: ColorF) {
         self.items.push(Box::new(RectItem {
                                      rect: rect,
-                                     clip: clip,
                                      color: color,
                                  }));
     }
