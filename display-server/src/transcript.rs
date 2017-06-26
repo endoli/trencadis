@@ -56,8 +56,7 @@ impl<'t> Transcript<'t> {
     }
 
     pub fn render(&self, builder: &mut DisplayListBuilder) {
-        let clip = builder.push_clip_region(&self.rect, Vec::new(), None);
-        builder.push_rect(self.rect, clip, ColorF::new(0.0, 1.0, 0.0, 0.3));
+        builder.push_rect(self.rect, self.rect, ColorF::new(0.0, 1.0, 0.0, 0.3));
         for (idx, entry) in self.entries.iter().enumerate() {
             let r = LayoutRect::new(LayoutPoint::new(self.rect.min_x() + 10.0,
                                                      self.rect.min_y() + 10.0 +
@@ -85,10 +84,10 @@ impl<'t> Transcript<'t> {
                  text: &str,
                  rect: LayoutRect,
                  fgcolor: ColorF) {
-        let font_size = 14.0;
+        let font_size = 14;
         let glyphs = self.font
             .layout(text,
-                    Scale::uniform(font_size),
+                    Scale::uniform(font_size as f32),
                     Point {
                         x: rect.min_x(),
                         y: rect.min_y() + 20.0,
@@ -100,14 +99,13 @@ impl<'t> Transcript<'t> {
                      }
                  })
             .collect::<Vec<_>>();
-        let clip = builder.push_clip_region(&self.rect, Vec::new(), None);
         builder.push_text(rect,
-                          clip,
+                          rect,
                           &glyphs,
                           self.font_key,
                           fgcolor,
-                          Au::from_f32_px(font_size),
-                          Au::from_px(0),
+                          Au::from_px(font_size),
+                          0.0,
                           None);
     }
 }

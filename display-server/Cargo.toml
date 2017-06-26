@@ -5,12 +5,12 @@ authors = ["Bruce Mitchener <bruce.mitchener@gmail.com>"]
 license = "MIT/Apache-2.0"
 
 [dependencies]
-app_units = "0.4"
+app_units = "0.5"
 euclid = "0.11"
 gleam = "0.4"
 palette = "0.2.1"
 petgraph = "0.4.4"
 rusttype = "0.2.1"
 servo-glutin = "0.10.1"
-webrender = { git = "https://github.com/servo/webrender", rev = "be5a41ec" }
-webrender_traits = { git = "https://github.com/servo/webrender", rev = "be5a41ec" }
+webrender = { git = "https://github.com/servo/webrender", rev = "366e94f" }
+webrender_traits = { git = "https://github.com/servo/webrender", rev = "366e94f" }

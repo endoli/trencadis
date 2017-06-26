@@ -123,8 +123,8 @@ fn main() {
     renderer.set_render_notifier(notifier);
 
     // Set up root frame and some other stuff as a test scene.
-    let bounds = LayoutRect::new(LayoutPoint::zero(),
-                                 LayoutSize::new(width as f32, height as f32));
+    let layout_size = LayoutSize::new(width as f32, height as f32);
+    let bounds = LayoutRect::new(LayoutPoint::zero(), layout_size);
 
     let mut root_frame = Frame::default();
 
@@ -142,7 +142,7 @@ fn main() {
 
     // Now build and render it.
     let pipeline_id = PipelineId(0, 0);
-    let mut builder = webrender_traits::DisplayListBuilder::new(pipeline_id);
+    let mut builder = webrender_traits::DisplayListBuilder::new(pipeline_id, layout_size);
     builder.push_stacking_context(webrender_traits::ScrollPolicy::Scrollable,
                                   bounds,
                                   None,

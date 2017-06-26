@@ -19,8 +19,7 @@ pub struct RectItem {
 
 impl Item for RectItem {
     fn build(&self, builder: &mut DisplayListBuilder) {
-        let clip = builder.push_clip_region(&self.rect, Vec::new(), None);
-        builder.push_rect(self.rect, clip, self.color);
+        builder.push_rect(self.rect, self.rect, self.color);
     }
 }
 
@@ -32,8 +31,7 @@ pub struct BorderItem {
 
 impl Item for BorderItem {
     fn build(&self, builder: &mut DisplayListBuilder) {
-        let clip = builder.push_clip_region(&self.rect, Vec::new(), None);
-        builder.push_border(self.rect, clip, self.widths, self.details);
+        builder.push_border(self.rect, self.rect, self.widths, self.details);
     }
 }
 
