@@ -8,9 +8,9 @@
 
 use app_units::Au;
 use rusttype::{Font, FontCollection, Point, Scale};
-use webrender_traits::{LayoutPoint, LayoutRect, LayoutSize};
-use webrender_traits::{ColorF, DisplayListBuilder};
-use webrender_traits::{FontKey, GlyphInstance, RenderApi};
+use webrender::api::{LayoutPoint, LayoutRect, LayoutSize};
+use webrender::api::{ColorF, DisplayListBuilder};
+use webrender::api::{FontKey, GlyphInstance, RenderApi};
 
 pub struct Transcript<'t> {
     font: Font<'t>,

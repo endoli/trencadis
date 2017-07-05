@@ -4,9 +4,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use webrender_traits::{BorderDetails, BorderWidths};
-use webrender_traits::{ColorF, DisplayListBuilder};
-use webrender_traits::LayoutRect;
+use webrender::api::{BorderDetails, BorderWidths};
+use webrender::api::{ColorF, DisplayListBuilder};
+use webrender::api::LayoutRect;
 
 pub trait Item {
     fn build(&self, builder: &mut DisplayListBuilder);

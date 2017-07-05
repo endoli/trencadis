@@ -34,14 +34,13 @@ extern crate palette;
 extern crate petgraph;
 extern crate rusttype;
 extern crate webrender;
-extern crate webrender_traits;
 
 use gleam::gl;
 use std::env;
 use std::path::PathBuf;
-use webrender_traits::{ColorF, Epoch, TransformStyle};
-use webrender_traits::{DeviceUintSize, LayoutPoint, LayoutRect, LayoutSize};
-use webrender_traits::PipelineId;
+use webrender::api::{ColorF, Epoch, TransformStyle};
+use webrender::api::{DeviceUintSize, LayoutPoint, LayoutRect, LayoutSize};
+use webrender::api::PipelineId;
 
 mod frames;
 mod transcript;
@@ -59,7 +58,7 @@ impl Notifier {
     }
 }
 
-impl webrender_traits::RenderNotifier for Notifier {
+impl webrender::api::RenderNotifier for Notifier {
     fn new_frame_ready(&mut self) {
         #[cfg(not(target_os = "android"))] self.window_proxy.wakeup_event_loop();
     }
@@ -144,14 +143,14 @@ fn main() {
 
     // Now build and render it.
     let pipeline_id = PipelineId(0, 0);
-    let mut builder = webrender_traits::DisplayListBuilder::new(pipeline_id, layout_size);
+    let mut builder = webrender::api::DisplayListBuilder::new(pipeline_id, layout_size);
     builder.push_stacking_context(
-        webrender_traits::ScrollPolicy::Scrollable,
+        webrender::api::ScrollPolicy::Scrollable,
         bounds,
         None,
         TransformStyle::Flat,
         None,
-        webrender_traits::MixBlendMode::Normal,
+        webrender::api::MixBlendMode::Normal,
         Vec::new(),
     );
     root_frame.build(&mut builder);
