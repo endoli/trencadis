@@ -26,9 +26,9 @@ impl<'t> Transcript<'t> {
         let font_key = api.generate_font_key();
         api.add_raw_font(font_key, font_bytes.to_vec(), 0);
         Transcript {
-            font: font,
-            font_key: font_key,
-            rect: rect,
+            font,
+            font_key,
+            rect,
             entries: vec![],
         }
     }
@@ -39,10 +39,10 @@ impl<'t> Transcript<'t> {
         let font_key = api.generate_font_key();
         api.add_raw_font(font_key, font_bytes.to_vec(), 0);
         Transcript {
-            font: font,
-            font_key: font_key,
-            rect: rect,
-            entries: entries,
+            font,
+            font_key,
+            rect,
+            entries,
         }
     }
 
@@ -110,6 +110,7 @@ impl<'t> Transcript<'t> {
     }
 }
 
+#[derive(Default)]
 pub struct Entry {
     prompt: String,
     input: String,
@@ -121,11 +122,10 @@ pub struct Entry {
 impl Entry {
     pub fn new(prompt: String, input: String, output: String) -> Entry {
         Entry {
-            prompt: prompt,
-            input: input,
-            output: output,
-            elapsed: 0.0,
-            complete: false,
+            prompt,
+            input,
+            output,
+            ..Default::default()
         }
     }
 
