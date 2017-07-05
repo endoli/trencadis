@@ -22,7 +22,9 @@ pub struct Transcript<'t> {
 impl<'t> Transcript<'t> {
     pub fn new(api: &RenderApi, rect: LayoutRect) -> Self {
         let font_bytes = include_bytes!("res/Inconsolata-Regular.ttf");
-        let font = FontCollection::from_bytes(font_bytes as &[u8]).into_font().unwrap();
+        let font = FontCollection::from_bytes(font_bytes as &[u8])
+            .into_font()
+            .unwrap();
         let font_key = api.generate_font_key();
         api.add_raw_font(font_key, font_bytes.to_vec(), 0);
         Transcript {
@@ -35,7 +37,9 @@ impl<'t> Transcript<'t> {
 
     pub fn new_with_entries(api: &RenderApi, rect: LayoutRect, entries: Vec<Entry>) -> Self {
         let font_bytes = include_bytes!("res/Inconsolata-Regular.ttf");
-        let font = FontCollection::from_bytes(font_bytes as &[u8]).into_font().unwrap();
+        let font = FontCollection::from_bytes(font_bytes as &[u8])
+            .into_font()
+            .unwrap();
         let font_key = api.generate_font_key();
         api.add_raw_font(font_key, font_bytes.to_vec(), 0);
         Transcript {
@@ -58,55 +62,70 @@ impl<'t> Transcript<'t> {
     pub fn render(&self, builder: &mut DisplayListBuilder) {
         builder.push_rect(self.rect, self.rect, ColorF::new(0.0, 1.0, 0.0, 0.3));
         for (idx, entry) in self.entries.iter().enumerate() {
-            let r = LayoutRect::new(LayoutPoint::new(self.rect.min_x() + 10.0,
-                                                     self.rect.min_y() + 10.0 +
-                                                     60.0 * (idx as f32)),
-                                    LayoutSize::new(100.0, 20.0));
+            let r = LayoutRect::new(
+                LayoutPoint::new(
+                    self.rect.min_x() + 10.0,
+                    self.rect.min_y() + 10.0 + 60.0 * (idx as f32),
+                ),
+                LayoutSize::new(100.0, 20.0),
+            );
             self.render_entry(entry, builder, r);
         }
     }
 
     pub fn render_entry(&self, e: &Entry, builder: &mut DisplayListBuilder, rect: LayoutRect) {
         let black = ColorF::new(0.0, 0.0, 0.0, 1.0);
-        let r = LayoutRect::new(LayoutPoint::new(rect.min_x(), rect.min_y()),
-                                LayoutSize::new(50.0, rect.max_y() - rect.min_y()));
+        let r = LayoutRect::new(
+            LayoutPoint::new(rect.min_x(), rect.min_y()),
+            LayoutSize::new(50.0, rect.max_y() - rect.min_y()),
+        );
         self.draw_text(builder, &e.prompt, r, black);
-        let r = LayoutRect::new(LayoutPoint::new(rect.min_x() + 60.0, rect.min_y()),
-                                LayoutSize::new(rect.max_x() - rect.min_y() - 60.0, 30.0));
+        let r = LayoutRect::new(
+            LayoutPoint::new(rect.min_x() + 60.0, rect.min_y()),
+            LayoutSize::new(rect.max_x() - rect.min_y() - 60.0, 30.0),
+        );
         self.draw_text(builder, &e.input, r, black);
-        let r = LayoutRect::new(LayoutPoint::new(rect.min_x() + 60.0, rect.min_y() + 30.0),
-                                LayoutSize::new(50.0, rect.max_y() - rect.min_y() - 30.0));
+        let r = LayoutRect::new(
+            LayoutPoint::new(rect.min_x() + 60.0, rect.min_y() + 30.0),
+            LayoutSize::new(50.0, rect.max_y() - rect.min_y() - 30.0),
+        );
         self.draw_text(builder, &e.output, r, black);
     }
 
-    fn draw_text(&self,
-                 builder: &mut DisplayListBuilder,
-                 text: &str,
-                 rect: LayoutRect,
-                 fgcolor: ColorF) {
+    fn draw_text(
+        &self,
+        builder: &mut DisplayListBuilder,
+        text: &str,
+        rect: LayoutRect,
+        fgcolor: ColorF,
+    ) {
         let font_size = 14;
         let glyphs = self.font
-            .layout(text,
-                    Scale::uniform(font_size as f32),
-                    Point {
-                        x: rect.min_x(),
-                        y: rect.min_y() + 20.0,
-                    })
+            .layout(
+                text,
+                Scale::uniform(font_size as f32),
+                Point {
+                    x: rect.min_x(),
+                    y: rect.min_y() + 20.0,
+                },
+            )
             .map(|glyph| {
-                     GlyphInstance {
-                         index: glyph.id().0,
-                         point: LayoutPoint::new(glyph.position().x, glyph.position().y),
-                     }
-                 })
+                GlyphInstance {
+                    index: glyph.id().0,
+                    point: LayoutPoint::new(glyph.position().x, glyph.position().y),
+                }
+            })
             .collect::<Vec<_>>();
-        builder.push_text(rect,
-                          rect,
-                          &glyphs,
-                          self.font_key,
-                          fgcolor,
-                          Au::from_px(font_size),
-                          0.0,
-                          None);
+        builder.push_text(
+            rect,
+            rect,
+            &glyphs,
+            self.font_key,
+            fgcolor,
+            Au::from_px(font_size),
+            0.0,
+            None,
+        );
     }
 }
 

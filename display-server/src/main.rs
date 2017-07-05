@@ -61,13 +61,11 @@ impl Notifier {
 
 impl webrender_traits::RenderNotifier for Notifier {
     fn new_frame_ready(&mut self) {
-        #[cfg(not(target_os = "android"))]
-        self.window_proxy.wakeup_event_loop();
+        #[cfg(not(target_os = "android"))] self.window_proxy.wakeup_event_loop();
     }
 
     fn new_scroll_frame_ready(&mut self, _composite_needed: bool) {
-        #[cfg(not(target_os = "android"))]
-        self.window_proxy.wakeup_event_loop();
+        #[cfg(not(target_os = "android"))] self.window_proxy.wakeup_event_loop();
     }
 }
 
@@ -83,9 +81,9 @@ fn main() {
         .with_title("WebRender Sample")
         .with_multitouch()
         .with_gl(glutin::GlRequest::GlThenGles {
-                     opengl_version: (3, 2),
-                     opengles_version: (3, 0),
-                 })
+            opengl_version: (3, 2),
+            opengles_version: (3, 0),
+        })
         .build()
         .unwrap();
 
@@ -131,45 +129,56 @@ fn main() {
     let button_size = LayoutSize::new(50.0, 100.0);
 
     let mut button_a = Frame::default();
-    button_a.push_rect(LayoutRect::new(LayoutPoint::new(10.0, 10.0), button_size),
-                       ColorF::new(1.0, 0.0, 0.0, 1.0));
+    button_a.push_rect(
+        LayoutRect::new(LayoutPoint::new(10.0, 10.0), button_size),
+        ColorF::new(1.0, 0.0, 0.0, 1.0),
+    );
     root_frame.push_child(button_a);
 
     let mut button_b = Frame::default();
-    button_b.push_rect(LayoutRect::new(LayoutPoint::new(90.0, 10.0), button_size),
-                       ColorF::new(1.0, 0.0, 0.0, 0.5));
+    button_b.push_rect(
+        LayoutRect::new(LayoutPoint::new(90.0, 10.0), button_size),
+        ColorF::new(1.0, 0.0, 0.0, 0.5),
+    );
     root_frame.push_child(button_b);
 
     // Now build and render it.
     let pipeline_id = PipelineId(0, 0);
     let mut builder = webrender_traits::DisplayListBuilder::new(pipeline_id, layout_size);
-    builder.push_stacking_context(webrender_traits::ScrollPolicy::Scrollable,
-                                  bounds,
-                                  None,
-                                  TransformStyle::Flat,
-                                  None,
-                                  webrender_traits::MixBlendMode::Normal,
-                                  Vec::new());
+    builder.push_stacking_context(
+        webrender_traits::ScrollPolicy::Scrollable,
+        bounds,
+        None,
+        TransformStyle::Flat,
+        None,
+        webrender_traits::MixBlendMode::Normal,
+        Vec::new(),
+    );
     root_frame.build(&mut builder);
-    let t = Transcript::new_with_entries(&api,
-                                         LayoutRect::new(LayoutPoint::new(30.0, 30.0),
-                                                         LayoutSize::new(600.0, 400.0)),
-                                         vec![Entry::new("[1]".to_owned(),
-                                                         "ls".to_owned(),
-                                                         "help_me.txt".to_owned()),
-                                              Entry::new("[2]".to_owned(),
-                                                         "cat help_me.txt".to_owned(),
-                                                         "We're long past that.".to_owned())]);
+    let t = Transcript::new_with_entries(
+        &api,
+        LayoutRect::new(LayoutPoint::new(30.0, 30.0), LayoutSize::new(600.0, 400.0)),
+        vec![
+            Entry::new("[1]".to_owned(), "ls".to_owned(), "help_me.txt".to_owned()),
+            Entry::new(
+                "[2]".to_owned(),
+                "cat help_me.txt".to_owned(),
+                "We're long past that.".to_owned()
+            ),
+        ],
+    );
     t.render(&mut builder);
     builder.pop_stacking_context();
 
     let epoch = Epoch(0);
     let root_background_color = ColorF::new(1.0, 1.0, 1.0, 1.0);
-    api.set_display_list(Some(root_background_color),
-                         epoch,
-                         LayoutSize::new(width as f32, height as f32),
-                         builder.finalize(),
-                         true);
+    api.set_display_list(
+        Some(root_background_color),
+        epoch,
+        LayoutSize::new(width as f32, height as f32),
+        builder.finalize(),
+        true,
+    );
     api.set_root_pipeline(pipeline_id);
     api.generate_frame(None);
 

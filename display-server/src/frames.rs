@@ -57,8 +57,8 @@ impl Frame {
 
     pub fn push_rect(&mut self, rect: LayoutRect, color: ColorF) {
         self.items.push(Box::new(RectItem {
-                                     rect: rect,
-                                     color: color,
-                                 }));
+            rect: rect,
+            color: color,
+        }));
     }
 }
