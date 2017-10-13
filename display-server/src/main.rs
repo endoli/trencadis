@@ -27,26 +27,23 @@
         unused_import_braces, unused_qualifications)]
 
 extern crate app_units;
-extern crate euclid;
 extern crate gleam;
 extern crate glutin;
-extern crate palette;
-extern crate petgraph;
 extern crate rusttype;
 extern crate webrender;
 
 use gleam::gl;
 use std::env;
 use std::path::PathBuf;
-use webrender::api::{ColorF, Epoch, TransformStyle};
-use webrender::api::{DeviceUintSize, LayoutPoint, LayoutRect, LayoutSize};
-use webrender::api::PipelineId;
+use webrender::api::*;
 
 mod frames;
 mod transcript;
+mod utils;
 
 use frames::Frame;
 use transcript::{Entry, Transcript};
+use utils::HandyDandyRectBuilder;
 
 struct Notifier {
     window_proxy: glutin::WindowProxy,
@@ -58,7 +55,7 @@ impl Notifier {
     }
 }
 
-impl webrender::api::RenderNotifier for Notifier {
+impl RenderNotifier for Notifier {
     fn new_frame_ready(&mut self) {
         #[cfg(not(target_os = "android"))] self.window_proxy.wakeup_event_loop();
     }
@@ -113,40 +110,41 @@ fn main() {
     };
 
     let size = DeviceUintSize::new(width, height);
-    let (mut renderer, sender) = webrender::renderer::Renderer::new(gl, opts, size).unwrap();
+    let (mut renderer, sender) = webrender::Renderer::new(gl, opts).unwrap();
     let api = sender.create_api();
+    let document_id = api.add_document(size);
 
     let notifier = Box::new(Notifier::new(window.create_window_proxy()));
     renderer.set_render_notifier(notifier);
 
     // Set up root frame and some other stuff as a test scene.
-    let layout_size = LayoutSize::new(width as f32, height as f32);
-    let bounds = LayoutRect::new(LayoutPoint::zero(), layout_size);
 
     let mut root_frame = Frame::default();
 
-    let button_size = LayoutSize::new(50.0, 100.0);
-
     let mut button_a = Frame::default();
     button_a.push_rect(
-        LayoutRect::new(LayoutPoint::new(10.0, 10.0), button_size),
+        LayoutPrimitiveInfo::new((10, 10).by(50, 100)),
         ColorF::new(1.0, 0.0, 0.0, 1.0),
     );
     root_frame.push_child(button_a);
 
     let mut button_b = Frame::default();
     button_b.push_rect(
-        LayoutRect::new(LayoutPoint::new(90.0, 10.0), button_size),
+        LayoutPrimitiveInfo::new((90, 10).by(50, 100)),
         ColorF::new(1.0, 0.0, 0.0, 0.5),
     );
     root_frame.push_child(button_b);
 
     // Now build and render it.
     let pipeline_id = PipelineId(0, 0);
+    let layout_size = LayoutSize::new(width as f32, height as f32);
+    let bounds = LayoutRect::new(LayoutPoint::zero(), layout_size);
     let mut builder = webrender::api::DisplayListBuilder::new(pipeline_id, layout_size);
+    let mut resources = ResourceUpdates::new();
+    let info = LayoutPrimitiveInfo::new(bounds);
     builder.push_stacking_context(
+        &info,
         webrender::api::ScrollPolicy::Scrollable,
-        bounds,
         None,
         TransformStyle::Flat,
         None,
@@ -156,7 +154,8 @@ fn main() {
     root_frame.build(&mut builder);
     let t = Transcript::new_with_entries(
         &api,
-        LayoutRect::new(LayoutPoint::new(30.0, 30.0), LayoutSize::new(600.0, 400.0)),
+        &mut resources,
+        LayoutPrimitiveInfo::new((30, 30).by(600, 400)),
         vec![
             Entry::new("[1]".to_owned(), "ls".to_owned(), "help_me.txt".to_owned()),
             Entry::new(
@@ -172,14 +171,16 @@ fn main() {
     let epoch = Epoch(0);
     let root_background_color = ColorF::new(1.0, 1.0, 1.0, 1.0);
     api.set_display_list(
-        Some(root_background_color),
+        document_id,
         epoch,
+        Some(root_background_color),
         LayoutSize::new(width as f32, height as f32),
         builder.finalize(),
         true,
+        resources,
     );
-    api.set_root_pipeline(pipeline_id);
-    api.generate_frame(None);
+    api.set_root_pipeline(document_id, pipeline_id);
+    api.generate_frame(document_id, None);
 
     'outer: for event in window.wait_events() {
         let mut events = Vec::new();
@@ -194,19 +195,14 @@ fn main() {
                 glutin::Event::Closed |
                 glutin::Event::KeyboardInput(_, _, Some(glutin::VirtualKeyCode::Escape)) |
                 glutin::Event::KeyboardInput(_, _, Some(glutin::VirtualKeyCode::Q)) => break 'outer,
-                glutin::Event::KeyboardInput(glutin::ElementState::Pressed,
-                                             _,
-                                             Some(glutin::VirtualKeyCode::P)) => {
-                    let enable_profiler = !renderer.get_profiler_enabled();
-                    renderer.set_profiler_enabled(enable_profiler);
-                    api.generate_frame(None);
-                }
                 _ => (),
             }
         }
 
         renderer.update();
-        renderer.render(DeviceUintSize::new(width, height));
+        renderer.render(DeviceUintSize::new(width, height)).unwrap();
         window.swap_buffers().ok();
     }
+
+    renderer.deinit();
 }
